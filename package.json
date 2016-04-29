@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js --env=dev",
     "serve": "node server.js --env=dev",
-    "serve:dist":  "open 'http://localhost:3000' &  httpster -p 3000 -d ./dist ",
+    "serve:dist": "open 'http://localhost:3000' &  httpster -p 3000 -d ./dist ",
     "copy": "copyfiles -f ./src/index.html  ./dist",
     "clean": "rimraf dist/*",
     "dist": "npm run clean & npm run copy & webpack --env=dist"
@@ -17,8 +17,11 @@
   "author": "Albert Oclarit",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^3.3.6",
     "react": "^15.0.1",
-    "react-dom": "^15.0.1"
+    "react-bootstrap": "^0.29.3",
+    "react-dom": "^15.0.1",
+    "react-router": "^2.4.0"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",
