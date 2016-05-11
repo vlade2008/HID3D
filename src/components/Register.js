@@ -1,21 +1,253 @@
 import React from 'react';
-import {Well} from 'react-bootstrap'
+import {Well,
+    FormGroup,
+    ControlLabel,
+    FormControl,
+    HelpBlock,
+    Radio,
+    Checkbox,
+    Button,
+    ButtonGroup
+  } from 'react-bootstrap'
+import validation from 'react-validation-mixin'
+import strategy from 'react-validatorjs-strategy'
+import validatorjs  from 'validatorjs'
+import classnames from 'classnames';
+  
+ class Register extends React.Component{
+ 
+   constructor(props){
+     super(props);
+     this.state={
+         movie:{}
+     };
+    
+    this.validatorTypes = strategy.createInactiveSchema(
+            {
+                firstName:'required',
+                lastName:'required',
+                movie:'required|moviesrule'
+            },
+            {
+                "required": "The field :attribute is required!"
+            },
+            (validator)=>{                
+                  validator.setAttributeNames({
+                    lastName:'Lastname',
+                    firstName:'Firstname'
+                });             
+                validator.constructor.registerAsync('moviesrule', 
+                (movie, attribute, req, passes)=> {                      
+                           var counter = 0;
+                          for(var key in  movie){
+                                   if(movie[key]) 
+                                     counter++;
+                             }                      
+                          if(counter==0)
+                            passes(false, 'Please select one movie');
+                            else
+                            passes();
+                        });
+            }
+        );
+     
+ }
+ 
+ 
+getValidatorData = ()=> {
+        return this.state
+    };
+    
+    
+getClasses = (field)=>{     
+       return classnames({
+            'success': this.props.isValid(field),
+            'error': !this.props.isValid(field)
+        });
+ };
+ 
+ 
+getErrorText=(field)=>{
+        var error = this.props.errors[field];
+        if(!error)
+            return null;
+        if(Array.isArray(error)){
+            var message = [];
+            message = error.map((item,i)=>{
+                return(
+                    <span key={i}>
+                        {item}
+                        <br/>
+                    </span>
+                )
+            });
+            return message;
+        }
+        else
+            return  (<span>{error || ''}</span>);
+    };
+    
+    
+  
+   onFormSubmit = (event)=>{
+        event.preventDefault();
+        this.props.validate(this.onValidate);
+    };
+ 
+   onValidate=(error)=>{
+        if (error) {
+            //form has errors; do not submit
+        } else {
+           // submit to rest here
+        }
+    };
 
-export default  class Register extends React.Component{
 
- render(){
+activateValidation=(e)=> {
+    strategy.activateRule(this.validatorTypes, e.target.name);
+    this.props.handleValidation(e.target.name)(e);
+};
+
+
+ 
+  render(){
       const wellStyle={
-        width:400,
-        height:500,
-        marginLeft:'auto',
-        marginRight:'auto'  
+         width:400,
+         height:650,
+         marginLeft:'auto',
+         marginTop:'10px',
+         marginRight:'auto'
       };
-    return (
-          <div className="container">
-            <Well style={wellStyle}>
-            <legend>Please Register</legend>
-            </Well>
+       return (
+         <div classname="container">
+         <Well style={wellStyle}>
+         <legend>Please Register</legend>
+        
+         <form onSubmit={this.onFormSubmit} noValidate>
+         
+         <FormGroup validationState={this.getClasses('firstName')}>
+         <ControlLabel>First Name</ControlLabel>
+         <FormControl
+         type="text"
+         name="firstName"
+         placeholder="Enter your first name"
+         value={this.state.firstName || ''}
+         onBlur={this.activateValidation}
+         onChange={
+           (e)=> this.setState({
+                  firstName:e.target.value
+                },() => {
+                  this.props.handleValidation(e.target.name)(e);
+                 })
+            }
+         />
+         <FormControl.Feedback/>
+         <HelpBlock>{this.getErrorText('firstName')}</HelpBlock>
+         </FormGroup>
+         
+         <FormGroup validationState={this.getClasses('lastName')}>
+         <ControlLabel>Last Name</ControlLabel>
+         <FormControl
+         type="text"
+         name="lastName"
+         placeholder="Enter your last name"
+         value={this.state.lastName || ''}
+         onBlur={this.activateValidation}
+         onChange={
+           (e)=> this.setState({
+                  lastName:e.target.value
+                },
+                () => {
+                  this.props.handleValidation(e.target.name)(e);
+                 })
+            }
+         />
+         <FormControl.Feedback/>
+         <HelpBlock>{this.getErrorText('lastName')}</HelpBlock>
+         </FormGroup>
+         <ControlLabel>Sex</ControlLabel>
+         <FormGroup>
+      <Radio  inline name="gender" value="Male"
+      checked={this.state.gender === 'Male'}
+      onClick={
+        ()=>{ 
+            this.setState({'gender':'Male'})
+        }
+      }
+      >Male</Radio>
+      <Radio  inline name="gender" value="Female"
+       checked={this.state.gender === 'Female'}
+        onClick={
+        ()=>{ 
+            this.setState({'gender':'Female'})
+        }
+      }
+      >Female</Radio>
+      </FormGroup>
+      <ControlLabel>Favorite Movie</ControlLabel>
+      <FormGroup validationState={this.getClasses('movie')}>
+      <Checkbox  inline checked={this.state.movie['harry'] === 1}
+                 onClick={()=>{
+                     var movie  = this.state.movie; 
+                     if(movie['harry'] === 1)
+                        movie['harry'] = undefined;
+                      else 
+                        movie['harry'] = 1; 
+                        
+                        this.setState({
+                            movie:movie
+                        });
+                 }}
+                 >Harry Potter</Checkbox>
+      <Checkbox  inline 
+                 checked={this.state.movie['star'] === 1}
+                 onClick={()=>{
+                     var movie  = this.state.movie; 
+                     if(movie['star'] === 1)
+                        movie['star'] = undefined;
+                      else 
+                        movie['star'] = 1; 
+                        
+                          this.setState({
+                            movie:movie
+                        });
+                 }}>Star Wars</Checkbox>
+        <HelpBlock>{this.getErrorText('movie')}</HelpBlock>
+      </FormGroup>
+      <FormGroup controlId="formControlsSelect">
+        <ControlLabel>Location in Bohol</ControlLabel>
+        <FormControl componentClass="select" 
+          value={this.state.location || ''}
+          onChange={
+            (e)=>this.setState({
+              location:e.target.value
+            })
+          }
+          placeholder="select">
+         <option value="">...</option>
+         <option value="lila">Lila</option>
+         <option value="loay">Loay</option>
+         <option value="loboc">Loboc</option>
+         <option value="loon">Loon</option>
+         <option value="dimiao" selected>Dimao</option>
+         <option value="valencia">Valencia</option>
+        </FormControl>
+        </FormGroup>
+       
+         
+          <div className="button">
+          <ButtonGroup>              
+         <Button bsStyle="success" type="submit">Submit</Button>
+         <Button bsStyle="info" type="reset">Reset</Button>
+         </ButtonGroup>
          </div>
-    );
- }
- }
+         </form>
+         
+         </Well>
+         </div>
+       );
+  }  
+}
+
+
+export default  validation(strategy)(Register);
