@@ -15,6 +15,7 @@ module.exports = {
         noInfo: false,
         proxy: {
             // proxy path - url that will be redirected to some server
+            '/api/*':'http://localhost:3000'
         }
     },
     module: {

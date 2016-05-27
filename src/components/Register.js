@@ -13,6 +13,8 @@ import validation from 'react-validation-mixin'
 import strategy from 'react-validatorjs-strategy'
 import validatorjs  from 'validatorjs'
 import classnames from 'classnames';
+import axios from 'axios';
+
   
  class Register extends React.Component{
  
@@ -21,11 +23,15 @@ import classnames from 'classnames';
      this.state={
          movie:{}
      };
+     
+     
     
     this.validatorTypes = strategy.createInactiveSchema(
             {
-                firstName:'required',
-                lastName:'required',
+                  username:'required',
+                  password:'required',
+                firstname:'required',
+                lastname:'required',
                 movie:'required|moviesrule'
             },
             {
@@ -33,8 +39,8 @@ import classnames from 'classnames';
             },
             (validator)=>{                
                   validator.setAttributeNames({
-                    lastName:'Lastname',
-                    firstName:'Firstname'
+                    lastname:'lastname',
+                    firstname:'firstname'
                 });             
                 validator.constructor.registerAsync('moviesrule', 
                 (movie, attribute, req, passes)=> {                      
@@ -54,6 +60,11 @@ import classnames from 'classnames';
  }
  
  
+    static contextTypes = {
+    router: React.PropTypes.object
+  };
+  
+  
 getValidatorData = ()=> {
         return this.state
     };
@@ -98,7 +109,23 @@ getErrorText=(field)=>{
         if (error) {
             //form has errors; do not submit
         } else {
-           // submit to rest here
+         
+            axios.post('/api/users',this.state)
+            .then((result)=>{
+                this.setState({
+                    username:'',
+                    password:'',
+                    lastname:'',
+                    firstname:'',
+                    gender:'',
+                    location:''
+                });
+                alert('User is saved');
+            })
+            .catch((error)=>{
+                 alert('User was not saved. Please check username duplication');
+            });
+            
         }
     };
 
@@ -108,7 +135,9 @@ activateValidation=(e)=> {
     this.props.handleValidation(e.target.name)(e);
 };
 
-
+viewUsers(){
+     this.context.router.push("/viewusers");
+}
  
   render(){
       const wellStyle={
@@ -125,45 +154,81 @@ activateValidation=(e)=> {
         
          <form onSubmit={this.onFormSubmit} noValidate>
          
-         <FormGroup validationState={this.getClasses('firstName')}>
+          <FormGroup validationState={this.getClasses('username')}>
+         <ControlLabel>Username</ControlLabel>
+         <FormControl
+         type="text"
+         name="username"
+         placeholder="Enter your username"
+         value={this.state.username || ''}
+         onBlur={this.activateValidation}
+         onChange={
+           (e)=> this.setState({
+                  username:e.target.value
+                })
+            }
+         />
+         <FormControl.Feedback/>
+         <HelpBlock>{this.getErrorText('username')}</HelpBlock>
+         </FormGroup>
+         
+         
+         
+           <FormGroup validationState={this.getClasses('password')}>
+         <ControlLabel>Password</ControlLabel>
+         <FormControl
+         type="password"
+         name="password"
+         placeholder="Enter your password"
+         value={this.state.password || ''}
+         onBlur={this.activateValidation}
+         onChange={
+           (e)=> this.setState({
+                  password:e.target.value
+                })
+            }
+         />
+         <FormControl.Feedback/>
+         <HelpBlock>{this.getErrorText('password')}</HelpBlock>
+         </FormGroup>
+         
+         
+         
+         
+         <FormGroup validationState={this.getClasses('firstname')}>
          <ControlLabel>First Name</ControlLabel>
          <FormControl
          type="text"
-         name="firstName"
+         name="firstname"
          placeholder="Enter your first name"
-         value={this.state.firstName || ''}
+         value={this.state.firstname || ''}
          onBlur={this.activateValidation}
          onChange={
            (e)=> this.setState({
-                  firstName:e.target.value
-                },() => {
-                  this.props.handleValidation(e.target.name)(e);
-                 })
+                  firstname:e.target.value
+                })
             }
          />
          <FormControl.Feedback/>
-         <HelpBlock>{this.getErrorText('firstName')}</HelpBlock>
+         <HelpBlock>{this.getErrorText('firstname')}</HelpBlock>
          </FormGroup>
          
-         <FormGroup validationState={this.getClasses('lastName')}>
+         <FormGroup validationState={this.getClasses('lastname')}>
          <ControlLabel>Last Name</ControlLabel>
          <FormControl
          type="text"
-         name="lastName"
+         name="lastname"
          placeholder="Enter your last name"
-         value={this.state.lastName || ''}
+         value={this.state.lastname || ''}
          onBlur={this.activateValidation}
          onChange={
            (e)=> this.setState({
-                  lastName:e.target.value
-                },
-                () => {
-                  this.props.handleValidation(e.target.name)(e);
-                 })
+                  lastname:e.target.value
+                })
             }
          />
          <FormControl.Feedback/>
-         <HelpBlock>{this.getErrorText('lastName')}</HelpBlock>
+         <HelpBlock>{this.getErrorText('lastname')}</HelpBlock>
          </FormGroup>
          <ControlLabel>Sex</ControlLabel>
          <FormGroup>
@@ -229,7 +294,7 @@ activateValidation=(e)=> {
          <option value="loay">Loay</option>
          <option value="loboc">Loboc</option>
          <option value="loon">Loon</option>
-         <option value="dimiao" selected>Dimao</option>
+         <option value="dimiao" >Dimao</option>
          <option value="valencia">Valencia</option>
         </FormControl>
         </FormGroup>
@@ -239,6 +304,7 @@ activateValidation=(e)=> {
           <ButtonGroup>              
          <Button bsStyle="success" type="submit">Submit</Button>
          <Button bsStyle="info" type="reset">Reset</Button>
+          <Button bsStyle="warning" type="button" onClick={this.viewUsers.bind(this)}>View Users</Button>
          </ButtonGroup>
          </div>
          </form>

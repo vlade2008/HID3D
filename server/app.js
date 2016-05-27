@@ -24,8 +24,11 @@ var dbconn = new Sequelize('', '', '', {
 var db = require('./db')(dbconn);
 
 
-var routes = require('./routes');
+var routes = require('./routes')(db.Users);
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use('/api',routes);
+
 
 
 //setting routes

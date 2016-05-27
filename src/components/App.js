@@ -14,8 +14,17 @@ export default  class App extends React.Component{
      super(props);
  }
  
+ 
+  static contextTypes = {
+    router: React.PropTypes.object
+  };
+  
+  viewUsers(){
+      this.context.router.push("/viewusers");
+  }
  goToRegister(){
-  this.props.history.push("/register");    
+  //this.props.history.push("/register");    
+ this.context.router.push("/register");
  }
  
  render(){
@@ -54,6 +63,7 @@ export default  class App extends React.Component{
             <Button bsStyle="info" type="button"
                     onClick={this.goToRegister.bind(this)}
                     >Register</Button>
+            <Button bsStyle="warning" type="button" onClick={this.viewUsers.bind(this)}>View Users</Button>
          </ButtonGroup>
          </div>
          </form>
