@@ -32,12 +32,12 @@ export default class ViewUsers extends React.Component{
 
     componentDidMount(){
 
-          axios.get('http://jsonplaceholder.typicode.com/users',this.state)
+          axios.get('http://jsonplaceholder.typicode.com/users')
             .then((result)=>{
 
                var data = result.data;
 
-                
+
 
                 this.setState({
                    usersData:data,

@@ -30,12 +30,12 @@ export default  class App extends React.Component{
  };
  componentDidMount(){
 
-       axios.get('http://jsonplaceholder.typicode.com/posts',this.state)
+       axios.get('http://jsonplaceholder.typicode.com/posts')
          .then((result)=>{
 
             var data = result.data;
 
-             
+
 
              this.setState({
                 postData:data

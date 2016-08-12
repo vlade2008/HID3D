@@ -39,7 +39,7 @@ export default class Album extends React.Component{
 
     componentDidMount(){
 
-             axios.get('http://jsonplaceholder.typicode.com/photos',this.state)
+             axios.get('http://jsonplaceholder.typicode.com/photos')
                .then((result)=>{
 
                   var data = result.data;
