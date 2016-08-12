@@ -6,37 +6,90 @@ import {
        FormControl,
        HelpBlock,
        Button,
-       ButtonGroup
-  } from 'react-bootstrap'
+       ButtonGroup,
+       Nav,
+       NavItem,
+       PageHeader,
+       Grid,
+       Row,
+       Col
+
+  } from 'react-bootstrap';
+
+  import { Link } from 'react-router';
+  import PostsGrid from './PostsGrid';
+  import axios from 'axios';
 
 export default  class App extends React.Component{
  constructor(props){
      super(props);
  }
- 
- 
+ state={
+
+   postData:[]
+ };
+ componentDidMount(){
+
+       axios.get('http://jsonplaceholder.typicode.com/posts',this.state)
+         .then((result)=>{
+
+            var data = result.data;
+
+             console.log(data);
+
+             this.setState({
+                postData:data
+             });
+         })
+         .catch((error)=>{
+
+         });
+ }
+
   static contextTypes = {
     router: React.PropTypes.object
   };
-  
-  viewUsers(){
-      this.context.router.push("/viewusers");
+
+ handleSelect(selectedKey) {
+
+  switch (selectedKey) {
+    case 1:
+      this.context.router.push("/");
+      break;
+    case 2:
+      this.context.router.push("/album")
+      break;
+    case 3:
+      this.context.router.push("/viewusers")
+      break;
+    default:
+    return;
+
   }
- goToRegister(){
-  //this.props.history.push("/register");    
- this.context.router.push("/register");
- }
- 
+}
+
  render(){
-      const wellStyle={
-        width:400,
-        height:500,
-        marginLeft:'auto',
-        marginRight:'auto'  
-      };
-     return (
+      return (
          <div className="container">
-         <Well style={wellStyle}>
+         <Nav bsStyle="pills" activeKey={1} onSelect={this.handleSelect.bind(this)}>
+          <NavItem eventKey={1}>Home</NavItem>
+          <NavItem eventKey={2}>Album</NavItem>
+          <NavItem eventKey={3} >Users</NavItem>
+        </Nav>
+        <PageHeader><small>Post</small></PageHeader>
+        <Grid>
+          <Row className="show-grid">
+              {this.state.postData.map((postData,i)=>
+                <PostsGrid body={postData.body}
+                title={postData.title}
+                id={postData.id}
+                userID={postData.userID}
+                key={i}/>
+              )}
+
+          </Row>
+        </Grid>
+         {/*<Well style={wellStyle}>
          <legend>Please Login</legend>
          <form>
           <FormGroup>
@@ -67,10 +120,10 @@ export default  class App extends React.Component{
          </ButtonGroup>
          </div>
          </form>
-         </Well>
+         </Well>*/}
          </div>
      );
  }
- 
+
 
 }
