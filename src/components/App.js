@@ -35,7 +35,7 @@ export default  class App extends React.Component{
 
             var data = result.data;
 
-             console.log(data);
+             
 
              this.setState({
                 postData:data

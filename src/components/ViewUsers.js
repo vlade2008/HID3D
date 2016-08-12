@@ -37,7 +37,7 @@ export default class ViewUsers extends React.Component{
 
                var data = result.data;
 
-                console.log(data);
+                
 
                 this.setState({
                    usersData:data,

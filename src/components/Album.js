@@ -44,10 +44,10 @@ export default class Album extends React.Component{
 
                   var data = result.data;
 
-                   console.log(data);
+
 
                    this.setState({
-                      albumData:data
+                      albumData:data.splice(0,100)
                    });
                })
                .catch((error)=>{
